@@ -5,9 +5,7 @@
         import com.intellij.uiDesigner.core.GridLayoutManager;
         import com.unsa.logic.Utils;
 
-        import java.awt.event.ActionListener;
         import javax.swing.*;
-        import java.awt.event.ActionEvent;
         import java.awt.*;
 
         public class Panel {
@@ -21,6 +19,7 @@
             private JPanel image13;
             private JTextField textField11;
             private JPanel image21;
+            private JPanel image23;
             private JPanel image22;
             private JButton button21;
             private JTextPane textPane21;
@@ -43,16 +42,15 @@
                 image13.setMinimumSize(new Dimension(DEFAULT_WITH / 2, DEFAULT_HEIGHT / 2));
 
                 // Convolucional
+                // imagen
                 image21 = new ImageSelector(true, 4);
                 image21.setMinimumSize(new Dimension(DEFAULT_WITH / 2, DEFAULT_HEIGHT / 2));
-                image22 = new ImageSelector(false, 5);
+                // template
+                image22 = new ImageSelector(true, 5);
                 image22.setMinimumSize(new Dimension(DEFAULT_WITH / 2, DEFAULT_HEIGHT / 2));
-                textPane21 = new JTextPane();
-                textPane21.setText("0.1;0.1;0.1\n" +
-                        "0.1;0.1;0.1\n" +
-                        "0.1;0.1;0.1");
-                Utils.setPane(textPane21);
-
+                // matching
+                image23 = new ImageSelector(false, 6);
+                image23.setMinimumSize(new Dimension(DEFAULT_WITH / 2, DEFAULT_HEIGHT / 2));
 
                 image31 = new ImageSelector(true, 4);
                 image31.setMinimumSize(new Dimension(DEFAULT_WITH / 2, DEFAULT_HEIGHT / 2));
@@ -120,7 +118,7 @@
                 panel4.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
                 zoom.addTab("Convolucional", panel4);
                 panel4.add(image21, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-                panel4.add(image22, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+                panel4.add(image23, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
                 final JPanel panel5 = new JPanel();
                 panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
                 panel4.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

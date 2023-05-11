@@ -1,4 +1,6 @@
 package com.unsa.logic;
+import org.apache.tools.ant.types.CommandlineJava;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,6 +11,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.Objects;
 
+import static java.awt.image.BufferedImage.TYPE_BYTE_GRAY;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Math.*;
 
@@ -18,6 +21,8 @@ public class Utils {
     private static BufferedImage image3;
     private static BufferedImage image4;
     private static BufferedImage image5;
+    private static BufferedImage imageTemplate;
+    private static BufferedImage imageMatching;
     private static JComboBox comboOperaciones;
     private static JTextField a;
     private static JTextPane pane;
@@ -33,6 +38,8 @@ public class Utils {
                 image2 = image;
             case 4:
                 image4 = image;
+            case 5:
+                imageTemplate = image;
         }
     }
 
@@ -137,52 +144,86 @@ public class Utils {
         pane = p;
     }
 
-    public static BufferedImage convolucional(){
-        if(image4 != null && !pane.getText().isBlank()){
-            image5 = new BufferedImage(image4.getWidth(), image4.getHeight(),TYPE_INT_RGB);
-            String kernelText = pane.getText();
-            String lineas[] = kernelText.split("\n");
-            String temp[] = lineas[0].split(";");
-            Double values[][] = new Double[lineas.length][temp.length];
-            int centerX = lineas.length/2;
-            int centerY = temp.length/2;
+    public static double distance(int a, int b){
+        /*double ra = a.getRed();
+        double rb = b.getRed();
+        double ga = a.getGreen();
+        double gb = b.getGreen();
+        double ba = a.getBlue();
+        double bb = b.getBlue();
 
-            for (int i = 0; i < lineas.length; i++){
-                temp = lineas[i].split(";");
-                for (int j = 0; j < temp.length; j++){
-                    values[i][j] = Double.valueOf(temp[j]);
-                }
-            }
-            Color colorAux1;
+        double sum = Math.pow(ra-rb,2)+Math.pow(ga-gb,2)+Math.pow(ba-bb,2);
+        return Math.sqrt(sum);*/
+        //System.out.println(a+","+b);
+        return Math.sqrt(Math.pow(a-b,2));
+    }
+
+    public static BufferedImage convolucional(){
+        System.out.println("start convolucional");
+        System.out.println("image4 :"+image4.getWidth()+" "+image4.getHeight());
+        System.out.println("imageTemplate :"+imageTemplate.getWidth()+" "+imageTemplate.getHeight());
+
+        int aux;
+        if(image4 != null && imageTemplate!=null){
+            imageMatching = new BufferedImage(image4.getWidth(), image4.getHeight(),TYPE_BYTE_GRAY);
+            WritableRaster rasterImage = image4.getRaster();
+            WritableRaster rasterMatching = imageMatching.getRaster();
+            WritableRaster rasterTemplate = imageTemplate.getRaster();
+
+            int colorAux1,colorAux2;
+            int centerX=imageTemplate.getWidth()/2;
+            int centerY=imageTemplate.getHeight()/2;
+            int minimo = Integer.MAX_VALUE;
+            int posx=0,posy=0;
+            double metricaDistancia=0;
             for ( int i = 0; i < image4.getWidth(); i++){
                 for (int j = 0; j < image4.getHeight(); j++){
-                    Double r = 0.0;
-                    Double g = 0.0;
-                    Double b = 0.0;
-                    for (int m = 0; m < values.length; m++){
-                        for (int n = 0; n < values[m].length; n++){
-                            double kernelFactor = values[m][n];
+                    metricaDistancia=0.0;
+                    for (int m = 0; m < imageTemplate.getWidth(); m++){
+                        for (int n = 0; n < imageTemplate.getHeight(); n++) {
                             int x = i + (m - centerX);
                             int y = j + (n - centerY);
-                            if (x > 0 && x < image4.getWidth() && y > 0 && y < image4.getHeight())
-                                colorAux1 = new Color(image4.getRGB(x, y));
-                            else
-                                colorAux1 = new Color(0,0,0);
-                            r += colorAux1.getRed()*kernelFactor;
-                            g += colorAux1.getGreen()*kernelFactor;
-                            b += colorAux1.getBlue()*kernelFactor;
+                            if (x > 0 && x < image4.getWidth() && y > 0 && y < image4.getHeight()){
+                                colorAux1 = rasterImage.getSample(x,y,0);
+                                //colorAux1 = new Color(image4.getRGB(i, j));
+                                //colorAux2 = rasterTemplate.getSample(m,n,0);
+                                //metricaDistancia+= distance(colorAux1,colorAux2);
+                            }else {
+                                colorAux1 = 0;
+                            }
+                            colorAux2 = rasterTemplate.getSample(m,n,0);
+                            metricaDistancia+= distance(colorAux1,colorAux2);
                         }
                     }
-
-                    int ri = (int) Math.min( r, 255);
-                    int gi = (int) Math.min( g,255);
-                    int bi = (int) Math.min( b,255);
-                    image5.setRGB(i,j,(ri << 16) | (gi << 8) | bi);
+                    //System.out.println("tot"+metricaDistancia);
+                    if(metricaDistancia<minimo) {
+                        minimo=(int)metricaDistancia;
+                        posx=i;
+                        posy=j;
+                    }
                 }
             }
-            return image5;
+            int p=0;
+            for (int i = posx; i < imageTemplate.getWidth() ; i++) {
+                for (int j = posy; j < imageTemplate.getHeight(); j++) {
+                    p=rasterImage.getSample(i,j,0);
+                    rasterMatching.setPixel(i,j,new int[]{p});
+                }
+            }
+
+            //System.out.println("aux"+aux);
+            //imageMatching.setRGB(i,j,aux);
+            //rasterMatching.setPixel(i,j,new int[]{aux});
+
+
+            //Graphics g = imageMatching.getGraphics();
+            //g.drawImage(imageMatching, 0, 0, null);
+            //g.dispose();
+            //return result;
+            System.out.println("finish convolucional");
+            return imageMatching;
         }else{
-            JOptionPane.showMessageDialog(null, "Debe ingresar una imagen y un kernel correcto.");
+            JOptionPane.showMessageDialog(null, "Debe ingresar una imagen y un template correcto.");
             return null;
         }
     }

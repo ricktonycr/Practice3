@@ -66,9 +66,9 @@ public class ImageSelector extends JPanel implements MouseListener {
         }else{
             if(this.id == 2)
                 this.image = Utils.transform();
-            if(this.id == 3)
+            //if(this.id == 3)
                 //this.image = Utils.aritmeticOperations();
-            if(this.id == 5)
+            if(this.id == 6)
                 this.image = Utils.convolucional();
             this.repaint();
         }
