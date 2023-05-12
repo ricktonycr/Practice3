@@ -9,3 +9,13 @@ Primero hacer click en el recuadro superior izquierdo y elegir una imagen.
 
 Luego hacer click en el recuadro superior derecho y se generará la representación de la transformada.
 ![img_1.png](images/img_2.png)
+
+## Template Matching 
+
+Primero elegir la imagen y el template que se pretende buscar.
+![img_3.png](images/img_3.png)
+
+Despues seleccionar el espacio en blanco para calcular el matching del template
+por la metrica de distancia euclidiana.
+
+![img_4.png](images/img_4.png)
